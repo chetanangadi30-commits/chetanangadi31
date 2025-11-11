@@ -86,9 +86,10 @@ th { background: #4CAF50; color: white; }
   </table>
 </div>
 
-<!-- View Students Branch Wise Section -->
+<!-- Filter Section -->
 <div id="filterSection" class="section hidden">
   <h2>View Students Branch Wise</h2>
+  
   <select id="branchFilter">
     <option value="">Select Branch</option>
     <option>Computer Science</option>
@@ -97,12 +98,14 @@ th { background: #4CAF50; color: white; }
     <option>E&E</option>
     <option>EEE</option>
   </select>
+
   <select id="yearFilter">
     <option value="">Select Year</option>
     <option>1</option>
     <option>2</option>
     <option>3</option>
   </select>
+
   <select id="semFilter">
     <option value="">Select Semester</option>
     <option>1</option>
@@ -112,6 +115,7 @@ th { background: #4CAF50; color: white; }
     <option>5</option>
     <option>6</option>
   </select>
+
   <button onclick="filterStudents()">Filter</button>
   <button class="print-btn" onclick="printFiltered()">Print Branch Wise</button>
   
@@ -158,17 +162,15 @@ function addStudent() {
   alert("Student Added Successfully!");
   document.querySelectorAll("#addSection input, #addSection select").forEach(el => el.value = "");
 
-  // Automatically show updated student list
   showSection('viewSection');
-
-  // Highlight newly added student
-  setTimeout(() => highlightStudent(student.id), 100);
+  setTimeout(() => highlightStudent(student.id), 200);
 }
 
 function loadStudents() {
   let students = JSON.parse(localStorage.getItem("students")) || [];
   let table = document.getElementById("studentList");
   table.innerHTML = "";
+  
   students.forEach(s => {
     table.innerHTML += `<tr id="student-${s.id}">
       <td>${s.name}</td>
@@ -184,7 +186,7 @@ function loadStudents() {
 }
 
 function highlightStudent(id) {
-  let row = document.getElementById(student-${id});
+  let row = document.getElementById(`student-${id}`);
   if (row) {
     row.classList.add("highlight");
     setTimeout(() => row.classList.remove("highlight"), 2000);
@@ -228,9 +230,7 @@ function filterStudents() {
 function printTable() {
   let divToPrint = document.getElementById("studentTable");
   let newWin = window.open("");
-  newWin.document.write("<html><head><title>Print</title></head><body>");
   newWin.document.write(divToPrint.outerHTML);
-  newWin.document.write("</body></html>");
   newWin.print();
   newWin.close();
 }
@@ -238,9 +238,7 @@ function printTable() {
 function printFiltered() {
   let divToPrint = document.getElementById("filterTable");
   let newWin = window.open("");
-  newWin.document.write("<html><head><title>Print</title></head><body>");
   newWin.document.write(divToPrint.outerHTML);
-  newWin.document.write("</body></html>");
   newWin.print();
   newWin.close();
 }
