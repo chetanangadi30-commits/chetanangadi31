@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Profile Manager</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+nav {
+  background: #007bff;
+  padding: 10px;
+  text-align: center;
+}
+nav button {
+  background: white;
+  color: #007bff;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.hidden { display: none; }
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+table, th, td {
+  border: 1px solid #ddd;
+}
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+.highlight {
+  background: yellow;
+  transition: background 2s ease;
+}
+.delete-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.view-btn {
+  background: green;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+label { font-weight: bold; }
+</style>
+</head>
+
+<body>
+
+<nav>
+  <button onclick="showSection('addSection')">Add Student</button>
+  <button onclick="showSection('viewSection')">View Students</button>
+  <button onclick="showSection('filterSection')">Filter Students</button>
+</nav>
+
+<div class="container">
+
+<!-- ✅ Add Section -->
+<section id="addSection" class="section">
+  <h2>Add Student</h2>
+
+  <label>Name:</label><br>
+  <input type="text" id="name"><br><br>
+
+  <label>Age:</label><br>
+  <input type="number" id="age"><br><br>
+
+  <label>Email:</label><br>
+  <input type="email" id="email"><br><br>
+
+  <label>Phone:</label><br>
+  <input type="text" id="phone"><br><br>
+
+  <label>Branch:</label><br>
+  <select id="branch">
+    <option value="">Select</option>
+    <option value="CSE">CSE</option>
+    <option value="ECE">ECE</option>
+    <option value="EEE">EEE</option>
+  </select><br><br>
+
+  <label>Year:</label><br>
+  <select id="year">
+    <option value="">Select</option>
+    <option value="1">1st</option>
+    <option value="2">2nd</option>
+    <option value="3">3rd</option>
+    <option value="4">4th</option>
+  </select><br><br>
+
+  <label>Semester:</label><br>
+  <select id="sem">
+    <option value="">Select</option>
+    <option value="1">1</option><option value="2">2</option>
+    <option value="3">3</option><option value="4">4</option>
+    <option value="5">5</option><option value="6">6</option>
+    <option value="7">7</option><option value="8">8</option>
+  </select><br><br>
+
+  <button onclick="addStudent()">Add Student</button>
+</section>
+
+
+<!-- ✅ View All Students -->
+<section id="viewSection" class="section hidden">
+  <h2>Student List</h2>
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>Name</th><th>Age</th><th>Email</th><th>Phone</th><th>Branch</th><th>Year</th><th>Sem</th>
+        <th>View</th><th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="studentList"></tbody>
+  </table>
+</section>
+
+
+<!-- ✅ View Single Student Section -->
+<section id="viewDetailSection" class="section hidden">
+  <h2>Student Details</h2>
+  <p id="detailBox"></p>
+  <button onclick="showSection('viewSection')">Back</button>
+</section>
+
+
+<!-- ✅ Filter Section -->
+<section id="filterSection" class="section hidden">
+  <h2>Filter Students</h2>
+
+  <label>Branch:</label>
+  <select id="branchFilter" onchange="filterStudents()">
+    <option value="">All</option>
+    <option value="CSE">CSE</option>
+    <option value="ECE">ECE</option>
+    <option value="EEE">EEE</option>
+  </select>
+
+  <label>Year:</label>
+  <select id="yearFilter" onchange="filterStudents()">
+    <option value="">All</option><option value="1">1st</option>
+    <option value="2">2nd</option><option value="3">3rd</option>
+    <option value="4">4th</option>
+  </select>
+
+  <label>Sem:</label>
+  <select id="semFilter" onchange="filterStudents()">
+    <option value="">All</option>
+    <option value="1">1</option><option value="2">2</option>
+    <option value="3">3</option><option value="4">4</option>
+    <option value="5">5</option><option value="6">6</option>
+    <option value="7">7</option><option value="8">8</option>
+  </select>
+
+  <table id="filterTable" style="margin-top:15px;">
+    <thead>
+      <tr>
+        <th>Name</th><th>Age</th><th>Email</th><th>Phone</th><th>Branch</th><th>Year</th><th>Sem</th>
+      </tr>
+    </thead>
+    <tbody id="filterList"></tbody>
+  </table>
+</section>
+
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id === 'viewSection') loadStudents();
+}
+
+function addStudent() {
+  let student = {
+    id: Date.now(),
+    name: name.value,
+    age: age.value,
+    email: email.value,
+    phone: phone.value,
+    branch: branch.value,
+    year: year.value,
+    sem: sem.value
+  };
+
+  if (!student.name || !student.age || !student.email || !student.phone ||
+      !student.branch || !student.year || !student.sem) {
+    alert("Fill all fields!");
+    return;
+  }
+
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+  students.push(student);
+  localStorage.setItem("students", JSON.stringify(students));
+
+  alert("Added Successfully!");
+  showSection('viewSection');
+  setTimeout(() => highlightStudent(student.id), 300);
+}
+
+function loadStudents() {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+  studentList.innerHTML = "";
+
+  students.forEach(s => {
+    studentList.innerHTML += `
+      <tr id="student-${s.id}">
+        <td>${s.name}</td><td>${s.age}</td><td>${s.email}</td><td>${s.phone}</td>
+        <td>${s.branch}</td><td>${s.year}</td><td>${s.sem}</td>
+        <td><button class="view-btn" onclick="viewDetail(${s.id})">View</button></td>
+        <td><button class="delete-btn" onclick="deleteStudent(${s.id})">Delete</button></td>
+      </tr>`;
+  });
+}
+
+function viewDetail(id) {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+  let s = students.find(x => x.id === id);
+  detailBox.innerHTML = `
+    <b>Name:</b> ${s.name}<br>
+    <b>Age:</b> ${s.age}<br>
+    <b>Email:</b> ${s.email}<br>
+    <b>Phone:</b> ${s.phone}<br>
+    <b>Branch:</b> ${s.branch}<br>
+    <b>Year:</b> ${s.year}<br>
+    <b>Semester:</b> ${s.sem}<br>
+  `;
+  showSection('viewDetailSection');
+}
+
+function deleteStudent(id) {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+  students = students.filter(s => s.id !== id);
+  localStorage.setItem("students", JSON.stringify(students));
+  loadStudents();
+}
+
+function highlightStudent(id) {
+  let row = document.getElementById(`student-${id}`);
+  if(row) {
+    row.classList.add('highlight');
+    setTimeout(() => row.classList.remove('highlight'), 2000);
+  }
+}
+
+function filterStudents() {
+  let b = branchFilter.value, y = yearFilter.value, se = semFilter.value;
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+  let f = students.filter(s => 
+    (!b || s.branch === b) && (!y || s.year === y) && (!se || s.sem === se)
+  );
+
+  filterList.innerHTML = "";
+  f.forEach(s => {
+    filterList.innerHTML += `
+      <tr>
+        <td>${s.name}</td><td>${s.age}</td><td>${s.email}</td>
+        <td>${s.phone}</td><td>${s.branch}</td><td>${s.year}</td><td>${s.sem}</td>
+      </tr>`;
+  });
+}
+</script>
+
+</body>
+</html>
